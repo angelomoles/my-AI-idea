@@ -14,6 +14,8 @@ Beyond epidemiological analysis, the proposed approach could also support the de
 
 My personal motivation is to apply machine learning methods to a real-world and socially relevant dataset, exploring how interpretable models can help analyze complex population health patterns. This topic is important because it connects data science with public health research, allowing quantitative methods to support a deeper understanding of how social and demographic factors relate to health outcomes and how predictive analysis may contribute to both research and prevention.
 
+![graph](/graph.pdf)
+
 ## How is it used?
 
 The solution is mainly intended for research and analytical environments where large population datasets are studied over time, such as epidemiological monitoring, public health analysis, or statistical reporting. Futhermore, it could support clinical monitoring contexts, for example by helping professionals stratify risk levels and guide preventive attention.
