@@ -39,4 +39,95 @@ The project could evolve into a more comprehensive predictive and analytical pla
 
 Further development would require interdisciplinary collaboration, including expertise in clinical psychiatry, epidemiology, regulatory, and ethics, as well as advanced data science and software engineering skills.
 
+# Code example
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+def main(): 
+
+  # 1. DATASET
+  
+  data = {
+      "sex": [
+          "M","M","M","M","F","F","F","F",
+          "M","M","M","M","F","F","F","F",
+          "M","M","M","M","F","F","F","F"
+      ],
+      "age_group": [
+          "15-34","15-34","15-34","15-34",
+          "15-34","15-34","15-34","15-34",
+          "35-64","35-64","35-64","35-64",
+          "35-64","35-64","35-64","35-64",
+          "65+","65+","65+","65+",
+          "65+","65+","65+","65+"
+      ],
+      "physical_disease": [
+          0,1,1,0,0,1,1,0,
+          0,1,1,0,0,1,1,0,
+          0,1,1,0,0,1,1,0
+      ],
+      "mental_disease": [
+          1,0,1,0,1,0,1,0,
+          1,0,1,0,1,0,1,0,
+          1,0,1,0,1,0,1,0
+      ],
+      "suicides": [
+          50, 8, 3, 381, 14, 2, 1, 93,
+          243, 30, 28, 1201, 115, 11, 21, 278,
+          129, 129, 70, 814, 81, 13, 22, 197
+      ]
+  }
+  df = pd.DataFrame(data)
+  
+  # 2. TARGET CREATION
+  
+  threshold = df["suicides"].median()
+  df["high_rate"] = (df["suicides"] > threshold).astype(int)
+  
+  X = df.drop(columns=["sex","age_group","physical_disease","mental_disease"])
+  y = df["high_rate"]
+  
+  # 3. PREPROCESSING
+  categorical_features = ["sex","age_group"]
+  numeric_features = ["physical_disease","mental_disease"]
+  
+  preprocessor = ColumnTransformer(
+      transformers=[
+          ("cat", OneHotEncoder(), categorical_features),
+          ("num", "passthrough", numeric_features)
+      ]
+  )
+  
+  # 4. MODEL
+  
+  model = Pipeline([
+      ("prep", preprocessor),
+      ("clf", LogisticRegression())
+  ])
+  
+  # 5. TRAINING
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+  model.fit(X_train, y_train)
+  
+  # 6. NEW CASE PREDICTION
+  new_case = pd.DataFrame({
+      "sex": ["M"],
+      "age_group": ["65+"],
+      "physical_disease": [1],
+      "mental_disease": [1]
+  })
+  
+  prob = model.predict_proba(new_case)[0][1]
+  prediction = model.predict(new_case)[0]
+  
+  print("Probability high risk:", prob)
+  print("Predicted class:", prediction)
+
+main()
+
 ## Acknowledgments
